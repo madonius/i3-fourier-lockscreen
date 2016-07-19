@@ -12,7 +12,9 @@ mag_spectrum = 20*np.log(np.abs(fshift))
 rows, cols = image.shape
 red_const = 300
 
-crow, ccol = rows/2, cols/2
+crow = rows/2
+ccol = cols/2
+
 fshift[:int(crow-rows/red_const), :int(ccol-cols/red_const)] = 0
 fshift[:int(crow-rows/red_const), int(ccol+cols/red_const):] = 0
 fshift[int(crow+rows/red_const):, int(ccol+cols/red_const):] = 0
@@ -22,4 +24,5 @@ f_ishift = np.fft.ifftshift(fshift)
 img_back = abs(np.fft.ifft2(f_ishift))
 
 result = Image.fromarray((img_back).astype(np.uint8))
-result.save(sys.argv[2], "JPEG", quality=80, optimize=True, progressive=True)
+
+result.save(sys.argv[2], "PNG")
