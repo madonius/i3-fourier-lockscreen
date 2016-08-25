@@ -1,10 +1,14 @@
 #!/bin/bash
 
-FILEPATH="/tmp/screenshot.png"
+FILEPATH="/tmp/screen.png"
 
-import -window root "$FILEPATH.jpg"
-./fourier.py "$FILEPATH.jpg" $FILEPATH
+import -window root $FILEPATH
 
-i3lock -f --image=$FILEPATH
-rm $FILEPATH*
+#convert -spread 15 -implode 0.4 -negate $FILEPATH $FILEPATH
+~/.config/i3/scripts/fourier.py $FILEPATH $FILEPATH
 
+#mute all audio
+amixer -q sset Master,0 mute
+
+i3lock --image=$FILEPATH
+#rm $FILEPATH
