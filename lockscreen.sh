@@ -11,5 +11,5 @@ import -window root $FILEPATH
 #mute all audio
 amixer -q sset Master,0 mute
 
-i3lock --image=$FILEPAH_LOCK
+i3lock --image=$FILEPATH_LOCK
 #rm $FILEPATH
