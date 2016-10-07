@@ -1,13 +1,12 @@
 #!/usr/bin/env python3
 
-#import numpy as np
-from scipy import fftpack
-from scipy import absolute
-from scipy.misc import imsave, imread, imshow
+from scipy import absolute, fftpack
+from scipy.misc import imsave, imread, imresize
 from PIL import Image
 import sys
 
 image = imread(sys.argv[1])
+image = imresize(image, 0.5, interp='bilinear')
 fft = fftpack.fftn(image)
 fshift = fftpack.fftshift(fft)
 
@@ -25,6 +24,7 @@ f_ishift = fftpack.ifftshift(fshift)
 img_back = fftpack.ifftn(f_ishift)
 img_back = absolute(img_back)
 
-print(img_back[100])
+img_back = imresize(img_back, 2.0, interp='bilinear')
+
 result = imsave(sys.argv[2], img_back)
 #result.save(sys.argv[2], "JPEG", quality=80, optimize=True, progressive=True)
