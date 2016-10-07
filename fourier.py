@@ -14,7 +14,9 @@ rows = len(fft)
 cols = len(fft[0])
 red_const = int(3*cols/4)
 
-crow, ccol = int(rows/2), int(cols/2)
+crow = rows/2
+ccol = cols/2
+
 fshift[:int(crow-rows/red_const), :int(ccol-cols/red_const)] = 0
 fshift[:int(crow-rows/red_const), int(ccol+cols/red_const):] = 0
 fshift[int(crow+rows/red_const):, int(ccol+cols/red_const):] = 0
@@ -27,4 +29,3 @@ img_back = absolute(img_back)
 img_back = imresize(img_back, 2.0, interp='bilinear')
 
 result = imsave(sys.argv[2], img_back)
-#result.save(sys.argv[2], "JPEG", quality=80, optimize=True, progressive=True)
