@@ -41,7 +41,7 @@ img_back = absolute(img_back)
 print("Retransformed: ", dt.now()-start_time)
 start_time = dt.now()
 
-img_back = imresize(img_back, 2.0, interp='bilinear')
+img_back = imresize(img_back, 2.0, interp='nearest')
 print("Resized: ", dt.now()-start_time)
 start_time = dt.now()
 
