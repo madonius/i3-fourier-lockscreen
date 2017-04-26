@@ -26,6 +26,6 @@ f_ishift = fftpack.ifftshift(fshift)
 img_back = fftpack.ifftn(f_ishift)
 img_back = absolute(img_back)
 
-img_back = imresize(img_back, 2.0, interp='bilinear')
+img_back = imresize(img_back, 2.0, interp='nearest')
 
 result = imsave(sys.argv[2], img_back)
