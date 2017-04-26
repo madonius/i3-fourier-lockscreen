@@ -5,8 +5,8 @@ from scipy.misc import imsave, imread, imresize
 from PIL import Image
 import sys
 
-image = imread(sys.argv[1])
-image = imresize(image, 0.5, interp='bilinear')
+image = imread(sys.argv[1], mode='RGB')
+image = imresize(image, 0.5, interp='nearest')
 fft = fftpack.fftn(image)
 fshift = fftpack.fftshift(fft)
 
