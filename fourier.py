@@ -8,10 +8,10 @@ import sys
 
 start_time = dt.now()
 
-image = imread(sys.argv[1])
+image = imread(sys.argv[1], mode='RGB')
 print("Read: ", dt.now()-start_time)
 start_time = dt.now()
-image = imresize(image, 0.5, interp='bilinear')
+image = imresize(image, 0.5, interp='nearest')
 print("Rescaled: ", dt.now()-start_time)
 start_time = dt.now()
 fft = fftpack.fftn(image)
