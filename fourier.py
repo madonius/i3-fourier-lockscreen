@@ -2,11 +2,26 @@
 
 from scipy import absolute, fftpack
 from scipy.misc import imsave, imread, imresize
-from PIL import Image
 import sys
+import time
+
+def fft_row(target, img_row, row_nr):
+    """
+    :param target:
+    :param img_row:
+    :param row_nr:
+    :return:
+    """
+    target[row_nr] = fftpack.fft(img_row)
 
 image = imread(sys.argv[1], mode='RGB')
 image = imresize(image, 0.5, interp='nearest')
+
+fft_image = [[0] * len(image[0]) for i in range(len(image))]
+for line in image:
+    linefft = fftpack.fft(line)
+    fft_image.append(linefft)
+
 fft = fftpack.fftn(image)
 fshift = fftpack.fftshift(fft)
 
