@@ -17,10 +17,15 @@ red_const = int(3*cols/4)
 crow = rows/2
 ccol = cols/2
 
-fshift[:int(crow-rows/red_const), :int(ccol-cols/red_const)] = 0
-fshift[:int(crow-rows/red_const), int(ccol+cols/red_const):] = 0
-fshift[int(crow+rows/red_const):, int(ccol+cols/red_const):] = 0
-fshift[int(crow+rows/red_const):, :int(ccol-cols/red_const)] = 0
+upper_boundary = int(crow - rows / red_const)
+lower_boundary = int(crow + rows / red_const)
+left_boundary = int(ccol - cols / red_const)
+right_boundary = int(ccol + cols / red_const)
+
+fshift[:upper_boundary, :left_boundary] = 0
+fshift[:upper_boundary, right_boundary:] = 0
+fshift[lower_boundary:, right_boundary:] = 0
+fshift[lower_boundary:, :left_boundary] = 0
 
 f_ishift = fftpack.ifftshift(fshift)
 img_back = fftpack.ifftn(f_ishift)
