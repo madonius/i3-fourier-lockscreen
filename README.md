@@ -16,5 +16,21 @@ Captures the image executes the python script on that image and runs i3lock with
 ### The python script
 Does the math with the picture
 
+## Usage
+
+Clone the repository
+```bash
+mkdir -p $XDG_CONFIG_HOME/i3/scripts/
+git checkout https://github.com/madonius/i3-fourier-lockscreen.git
+```
+
+Edit your configuration file and add
+```
+# lock the screen
+bindsym $mod+i exec $XDG_CONFIG_HOME/i3/scripts/i3-fourier-lockscreen/lockscreen.sh
+```
+
+Now you may lock your screen by pressing the `modifier` key and `i`
+
 ## Licence
 GPLv3
