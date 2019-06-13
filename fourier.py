@@ -8,7 +8,7 @@ import imageio
 scale = 5.
 
 image = imageio.imread(sys.argv[1])
-image = skimage.transform.rescale(skimage.color.rgba2rgb(image), 1./scale,anti_aliasing=False,multichannel=True)
+image = skimage.transform.rescale(skimage.color.rgba2rgb(image), 1./scale, anti_aliasing=False, multichannel=True)
 fft = fftpack.fftn(image)
 fshift = fftpack.fftshift(fft)
 
