@@ -22,12 +22,13 @@ Clone the repository
 ```bash
 mkdir -p $XDG_CONFIG_HOME/i3/scripts/
 git checkout https://github.com/madonius/i3-fourier-lockscreen.git
+cp fourier.py lockscreen.sh $XDG_CONFIG_HOME/i3/scripts/
 ```
 
 Edit your configuration file and add
 ```
 # lock the screen
-bindsym $mod+i exec $XDG_CONFIG_HOME/i3/scripts/i3-fourier-lockscreen/lockscreen.sh
+bindsym $mod+i exec $XDG_CONFIG_HOME/i3/scripts/lockscreen.sh
 ```
 
 Now you may lock your screen by pressing the `modifier` key and `i`
