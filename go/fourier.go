@@ -21,10 +21,12 @@ func main() {
 	var input_file string
 	var output_file string
 	var radius float64
+	var final_size uint
 
 	flag.StringVar(&input_file, "input-file", "", "The imagefile(PNG) that will be converted")
 	flag.StringVar(&output_file, "output-file", "", "The file where the output will be written to")
 	flag.Float64Var(&radius, "radius", 0.2, "The radius that is going to be cut off (e.g. 0.1)")
+	flag.UintVar(&final_size, "final-size", 0, "The final size of the image, if 0 the original size will be used")
 	flag.Parse()
 
 	log.Println("Parsed the flags")
@@ -39,7 +41,11 @@ func main() {
 		log.Fatal(err)
 	}
 
-	m := resize.Resize(1000, 0, orig_m, resize.Bicubic)
+	m := orig_m
+	if final_size > 0 {
+		m = resize.Resize(final_size, 0, orig_m, resize.Bicubic)
+	}
+
 	bounds := m.Bounds()
 	log.Println("Read the image file")
 
@@ -47,17 +53,15 @@ func main() {
 	y_size := bounds.Max.Y - bounds.Min.Y
 	log.Printf("Image size %d %d", x_size, y_size)
 
-	img_mtrx := dsputils.MakeEmptyMatrix([]int{3, x_size, y_size})
+	img_mtrx := dsputils.MakeEmptyMatrix([]int{1, x_size, y_size})
 
 	log.Println("Generated the empty matrix")
 
 	// Split the image to it's separate components
 	for y := bounds.Min.Y; y < bounds.Max.Y; y++ {
 		for x := bounds.Min.X; x < bounds.Max.X; x++ {
-			r, g, b, _ := m.At(x, y).RGBA()
-			img_mtrx.SetValue(complex(float64(r), 0), []int{0, x, y})
-			img_mtrx.SetValue(complex(float64(g), 0), []int{1, x, y})
-			img_mtrx.SetValue(complex(float64(b), 0), []int{2, x, y})
+			r, b, g, a := m.At(x, y).RGBA()
+			img_mtrx.SetValue(complex((float64(a)/255.)*(float64(r)+float64(b)+float64(g))/3., 0), []int{0, x, y})
 		}
 	}
 
@@ -73,10 +77,8 @@ func main() {
 	for y := bounds.Min.Y; y < bounds.Max.Y; y++ {
 		for x := bounds.Min.X; x < bounds.Max.X; x++ {
 			d := math.Sqrt(math.Pow(float64(x-xhalf), 2)+math.Pow(float64(y-yhalf), 2)) - float64(xhalf)*radius
-			if d < 0 {
-				for i := 0; i < 3; i++ {
-					img_fft.SetValue(complex(0, 0), []int{i, x, y})
-				}
+			if d > 0 {
+				img_fft.SetValue(complex(0, 0), []int{0, x, y})
 			}
 		}
 	}
@@ -91,8 +93,8 @@ func main() {
 			out_image.Set(x, y,
 				color.RGBA{
 					uint8(cmplx.Abs(img_ifft.Value([]int{0, x, y}))),
-					uint8(cmplx.Abs(img_ifft.Value([]int{1, x, y}))),
-					uint8(cmplx.Abs(img_ifft.Value([]int{2, x, y}))),
+					uint8(cmplx.Abs(img_ifft.Value([]int{0, x, y}))),
+					uint8(cmplx.Abs(img_ifft.Value([]int{0, x, y}))),
 					uint8(0xff),
 				},
 			)
