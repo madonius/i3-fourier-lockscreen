@@ -27,7 +27,7 @@ fi
 
 $XDG_CONFIG_HOME/sway/scripts/fourier -input-file $FILEPATH \
                                       -output-file $FILEPATH_LOCK \
-									  -radius 0.01 \
+									  -radius 0.2 \
 
 #mute all audio
 amixer -q sset Master,0 mute
