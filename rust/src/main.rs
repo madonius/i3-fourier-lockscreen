@@ -3,6 +3,7 @@ use fft2d::slice::{fft_2d, fftshift, ifft_2d, ifftshift};
 use image::*;
 use rustfft::num_complex::Complex;
 use std::path::Path;
+use num;
 
 #[derive(Debug, Options)]
 struct FourierOptions {
@@ -17,7 +18,7 @@ struct FourierOptions {
 }
 
 fn main() {
-    let radius = 0.1;
+    let radius = 1.1;
     let opts = FourierOptions::parse_args_default_or_exit();
 
     let img = image::open(&Path::new(&opts.input_file.unwrap())).unwrap().to_luma8();
@@ -49,8 +50,9 @@ fn main() {
 
     for x in 1..width {
         for y in 1..height {
-            if  ((x*x + y*y) as f64) < radius*radius*((width*width) as f64) {
-                
+            if  ((num::pow(x_center-x,2) + num::pow(y_center-y,2)) as f64) < radius*radius*((width*width) as f64) {
+               img_buffer[coord_to_raw(x,y,width) as usize] = 
+                   num::complex::Complex::new(0.0, 0.0); 
             }
         }
     }
