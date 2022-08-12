@@ -1,12 +1,9 @@
 use gumdrop::Options;
+use fft2d::slice::{fft_2d, fftshift, ifft_2d, ifftshift};
+use image::*;
+use rustfft::num_complex::Complex;
+use std::path::Path;
 
-// Defines options that can be parsed from the command line.
-//
-// `derive(Options)` will generate an implementation of the trait `Options`.
-// Each field must either have a `Default` implementation or an inline
-// default value provided.
-//
-// (`Debug` is derived here only for demonstration purposes.)
 #[derive(Debug, Options)]
 struct FourierOptions {
     #[options(help = "The imagefile(PNG) that will be converted")]
@@ -20,6 +17,55 @@ struct FourierOptions {
 }
 
 fn main() {
+    let radius = 0.1;
     let opts = FourierOptions::parse_args_default_or_exit();
-    println!("{:#?}", opts);
+
+    let img = image::open(&Path::new(&opts.input_file.unwrap())).unwrap().to_luma8();
+    let (width, height) = img.dimensions();
+
+    // Convert the image buffer to complex numbers to be able to compute the FFT.
+    let mut img_buffer: Vec<Complex<f64>> = img
+        .into_raw()
+        .iter()
+        .map(|&pix| Complex::new(pix as f64 / 255.0, 0.0))
+        .collect();
+
+
+    fft_2d(width as usize, height as usize, &mut img_buffer);
+
+    img_buffer = fftshift(height as usize, width as usize, &img_buffer);
+   
+    img_buffer = ifftshift(height as usize, width as usize, &img_buffer);
+
+    ifft_2d(height as usize, width as usize, &mut img_buffer);
+
+    let fft_coef = 1.0 / (width * height) as f64;
+    for x in img_buffer.iter_mut() {
+        *x *= fft_coef;
+    }
+
+    let x_center = width/2;
+    let y_center = height/2;
+
+    for x in 1..width {
+        for y in 1..height {
+            if  ((x*x + y*y) as f64) < radius*radius*((width*width) as f64) {
+                
+            }
+        }
+    }
+
+    let img_raw: Vec<u8> = img_buffer
+        .iter()
+        .map(|c| (c.norm().min(1.0) * 255.0) as u8)
+        .collect();
+
+    let out_img = GrayImage::from_raw(width, height, img_raw).unwrap();
+
+    out_img.save(&Path::new(&opts.output_file.unwrap())).unwrap();
+}
+
+fn coord_to_raw(x: u32, y: u32, width: u32) -> u32 {
+    let array_pos = (y-1)*width+x;
+    return array_pos;
 }

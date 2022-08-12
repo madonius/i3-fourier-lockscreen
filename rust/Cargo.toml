@@ -5,6 +5,8 @@ authors = ["madonius"]
 edition = "2021"
 
 [dependencies]
-fft2d = "0.1.0"
-clap = "3.2.16"
-gumdrop = "0.8.0"
+fft2d = "*"
+clap = "*"
+gumdrop = "*"
+rustfft = "*"
+image = "*"
