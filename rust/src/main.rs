@@ -18,7 +18,7 @@ struct FourierOptions {
 }
 
 fn main() {
-    let radius = 1.1;
+    let radius = 0.54;
     let opts = FourierOptions::parse_args_default_or_exit();
 
     let img = image::open(&Path::new(&opts.input_file.unwrap())).unwrap().to_luma8();
@@ -34,8 +34,22 @@ fn main() {
 
     fft_2d(width as usize, height as usize, &mut img_buffer);
 
-    img_buffer = fftshift(height as usize, width as usize, &img_buffer);
    
+
+    let x_center = width/2;
+    let y_center = height/2;
+
+    for x in 1..width {
+        for y in 1..height {
+            if  ((x.abs_diff(x_center).pow(2) + y.abs_diff(y_center).pow(2)) as f64) < radius*radius*((width*width) as f64) {
+               img_buffer[coord_to_raw(x,y,width) as usize] = 
+                   num::complex::Complex::new(0.0, 0.0); 
+            }
+        }
+    }
+
+    img_buffer = fftshift(height as usize, width as usize, &img_buffer);
+    
     img_buffer = ifftshift(height as usize, width as usize, &img_buffer);
 
     ifft_2d(height as usize, width as usize, &mut img_buffer);
@@ -45,21 +59,9 @@ fn main() {
         *x *= fft_coef;
     }
 
-    let x_center = width/2;
-    let y_center = height/2;
-
-    for x in 1..width {
-        for y in 1..height {
-            if  ((num::pow(x_center-x,2) + num::pow(y_center-y,2)) as f64) < radius*radius*((width*width) as f64) {
-               img_buffer[coord_to_raw(x,y,width) as usize] = 
-                   num::complex::Complex::new(0.0, 0.0); 
-            }
-        }
-    }
-
     let img_raw: Vec<u8> = img_buffer
         .iter()
-        .map(|c| (c.norm().min(1.0) * 255.0) as u8)
+        .map(|c| 255 - (c.norm().min(1.0) * 255.0) as u8)
         .collect();
 
     let out_img = GrayImage::from_raw(width, height, img_raw).unwrap();
